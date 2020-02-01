@@ -1,6 +1,4 @@
-import sys
 import os
-import errno
 import time
 import json
 import docker
