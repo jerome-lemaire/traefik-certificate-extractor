@@ -86,6 +86,10 @@ def restartContainerWithDomains(domains):
 def createCerts(args):
     # Read JSON file
     data = json.loads(open(args.certificate).read())
+    keys = "uppercase"
+    if args.resolverid:
+        data = data[args.resolverid]
+        keys = "lowercase"
 
     # Determine ACME version
     acme_version = 2 if 'acme-v02' in data['Account']['Registration']['uri'] else 1
@@ -106,10 +110,16 @@ def createCerts(args):
             fullchain = c['Certificate']['Certificate']
             sans = c['Domains']['SANs']
         elif acme_version == 2:
-            name = c['Domain']['Main']
-            privatekey = c['Key']
-            fullchain = c['Certificate']
-            sans = c['Domain']['SANs']
+            if keys == "uppercase":
+                name = c['Domain']['Main']
+                privatekey = c['Key']
+                fullchain = c['Certificate']
+                sans = c['Domain']['SANs']
+            else:
+                name = c['domain']['main']
+                privatekey = c['key']
+                fullchain = c['certificate']
+                sans = []  #c['domain']['sans']  # not sure what this is - can't find any here...
 
         if (args.include and name not in args.include) or (args.exclude and name in args.exclude):
             continue
@@ -210,6 +220,7 @@ if __name__ == "__main__":
         description='Extract traefik letsencrypt certificates.')
     parser.add_argument('-c', '--certificate', default='acme.json', type=PathType(
         exists=True), help='file that contains the traefik certificates (default acme.json)')
+    parser.add_argument('--resolverid', help='Traefik certificate-resolver-id.')
     parser.add_argument('-d', '--directory', default='.',
                         type=PathType(type='dir'), help='output folder')
     parser.add_argument('-f', '--flat', action='store_true',
