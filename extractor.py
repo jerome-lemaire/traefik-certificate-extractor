@@ -95,31 +95,22 @@ def createCerts(args):
     acme_version = 2
 
     # Find certificates
-    if acme_version == 1:
-        certs = data['DomainsCertificate']['Certs']
-    elif acme_version == 2:
-        certs = data['Certificates']
+    certs = data['mytlschallenge']['Certificates']
 
     # Loop over all certificates
     names = []
 
     for c in certs:
-        if acme_version == 1:
-            name = c['Certificate']['Domain']
-            privatekey = c['Certificate']['PrivateKey']
-            fullchain = c['Certificate']['Certificate']
-            sans = c['Domains']['SANs']
-        elif acme_version == 2:
-            if keys == "uppercase":
-                name = c['Domain']['Main']
-                privatekey = c['Key']
-                fullchain = c['Certificate']
-                sans = c['Domain']['SANs']
-            else:
-                name = c['domain']['main']
-                privatekey = c['key']
-                fullchain = c['certificate']
-                sans = []  #c['domain']['sans']  # not sure what this is - can't find any here...
+        if keys == "uppercase":
+            name = c['Domain']['Main']
+            privatekey = c['Key']
+            fullchain = c['Certificate']
+            sans = c['Domain']['SANs']
+        else:
+            name = c['domain']['main']
+            privatekey = c['key']
+            fullchain = c['certificate']
+            sans = []  #c['domain']['sans']  # not sure what this is - can't find any here...
 
         if (args.include and name not in args.include) or (args.exclude and name in args.exclude):
             continue
