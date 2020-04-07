@@ -92,7 +92,7 @@ def createCerts(args):
         keys = "lowercase"
 
     # Determine ACME version
-    acme_version = 2 if 'acme-v02' in data['Account']['Registration']['uri'] else 1
+    acme_version = 2
 
     # Find certificates
     if acme_version == 1:
