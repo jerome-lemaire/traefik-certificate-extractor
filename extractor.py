@@ -86,10 +86,7 @@ def restartContainerWithDomains(domains):
 def createCerts(args):
     # Read JSON file
     data = json.loads(open(args.certificate).read())
-    keys = "uppercase"
-    if args.resolverid:
-        data = data[args.resolverid]
-        keys = "lowercase"
+    keys = "lowercase"
 
     # Determine ACME version
     acme_version = 2
